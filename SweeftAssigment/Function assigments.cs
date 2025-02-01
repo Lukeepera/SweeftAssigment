@@ -23,7 +23,7 @@ namespace SweeftAssigment
                 }
                 if (!char.IsLetterOrDigit(text[right]))
                 {
-                    right--;
+                    right--;git 
                     continue;
                 }
 
