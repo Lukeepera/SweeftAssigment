@@ -9,6 +9,7 @@ class Program
 
     static async Task Main(string[] args)
     {
+        //await CountryDataGenerator.GenerateCountryDataFiles(); ---- მეშვიდე დავალების გამოძახება entry point-ში
         Console.WriteLine("Press any key to stop the application !!");
 
         var binaryTask = PrintBinaryNumbersAsync();
