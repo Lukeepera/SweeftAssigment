@@ -1,10 +1,5 @@
-გამარჯობა, 
+The first five tasks are completed in the FunctionAssignments.cs file and are separated from each other with comments like //1st, //2nd, //3rd, and so on.
 
-პირველი ხუთი დავალება შესრულებულია **FunctionAssigments.cs** ფაილში და ერთმანეთისგან გამოყოფილია **//1st** , **//2nd** , **//3rd** და ა.შ. კომენტარებით.
+The query file for the sixth task and the screenshot are placed in the SQLAssignment folder, and they are completed using MS SQL.
 
-მეექვსე დავალების query ფაილი და screenshot მოთავსებულია **SQLAssigment** ფოლდერში და შესრულებულია **MS SQL** - ზე. 
-
-მეშვიდე, მერვე და მეცხრე დავალებები შესაბამისად არიან გადანაწილებული **7th**, **8th** და **9thTask** ფაილებში, პროექტის Entry point-ში ვიძახებ მხოლოდ მეცხრე დავალებას თუმცა იქვე კომენტარის გათიშვით შესაძლებელია მერვე დავალების გამოძახებაც.
-
-მადლობა. <33
-
+The seventh, eighth, and ninth tasks are distributed in the 7th, 8th, and 9thTask files, respectively. In the project's entry point, I am calling only the ninth task, but by commenting it out, it is possible to call the eighth task as well.
