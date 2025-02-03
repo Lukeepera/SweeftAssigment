@@ -1,53 +1,85 @@
 ﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
-public class CountryInfo
+namespace SchoolApp
 {
-    public Name Name { get; set; }
-    public string Region { get; set; }
-    public string Subregion { get; set; }
-    public double[] Latlng { get; set; }
-    public double Area { get; set; }
-    public long Population { get; set; }
-}
-
-public class Name
-{
-    public string Common { get; set; }
-}
-
-public class CountryDataGenerator
-{
-
-    private static readonly HttpClient _httpClient = new HttpClient();
-
-    public static async Task GenerateCountryDataFiles()
+    public class Teacher
     {
-        var response = await _httpClient.GetStringAsync("https://restcountries.com/v3.1/all");
+        public int TeacherId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Gender { get; set; }
+        public string SubjectArea { get; set; }
+        public ICollection<Student> Students { get; set; }
+    }
 
-        var countryList = JsonSerializer.Deserialize<CountryInfo[]>(response, new JsonSerializerOptions
+    public class Student
+    {
+        public int StudentId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Gender { get; set; }
+        public string Grade { get; set; }
+        public ICollection<Teacher> Teachers { get; set; }
+    }
+
+    public class SchoolDbContext : DbContext
+    {
+        public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Student> Students { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            PropertyNameCaseInsensitive = true
-        });
+            modelBuilder.Entity<Teacher>()
+                .HasMany(t => t.Students)
+                .WithMany(s => s.Teachers)
+                .UsingEntity(j => j.ToTable("TeacherStudents"));
+        }
 
-        string directoryPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\CountriesData"));
-        Directory.CreateDirectory(directoryPath);
-
-        foreach (var country in countryList)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (country == null || country.Name == null) continue;
-
-            string fileName = Path.Combine(directoryPath, $"{country.Name.Common}.txt");
-
-            await File.WriteAllTextAsync(fileName,
-                $"Region: {country.Region}\n" +
-                $"Subregion: {country.Subregion}\n" +
-                $"Latitude, Longitude: {string.Join(", ", country.Latlng ?? new double[0])}\n" +
-                $"Area: {country.Area} sq km\n" +
-                $"Population: {country.Population}\n");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-DSAR04C;Database=AdventureWorks2022;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;");
         }
     }
+
+    public class SchoolService
+    {
+        private readonly SchoolDbContext _context;
+
+        public SchoolService(SchoolDbContext context)
+        {
+            _context = context;
+        }
+
+        public IEnumerable<Teacher> FetchTeachersByStudent(string studentFirstName)
+        {
+            return _context.Teachers
+                           .Where(t => t.Students.Any(s => s.FirstName == studentFirstName))
+                           .ToList();
+        }
+    }
+
+    public class Program
+    {
+        //public static void Main(string[] args)
+        //{
+        //    using (var dbContext = new SchoolDbContext())
+        //    {
+        //        var service = new SchoolService(dbContext);
+        //        var teachersForStudent = service.FetchTeachersByStudent("Giorgi");
+
+        //        foreach (var teacher in teachersForStudent)
+        //        {
+        //            Console.WriteLine($"{teacher.FirstName} {teacher.LastName}");
+        //        }
+        //    }
+        //}
+
+        //              ↑↑↑↑ უშუალო გამოყენების მაგალითი ↑↑↑↑
+        // !! დაკომენტარებულია რადგან არ შეიძლება არსებობდეს ორი ცალი Entry point. !! 
+    }
 }
+
